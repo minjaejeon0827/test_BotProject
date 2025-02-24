@@ -216,11 +216,11 @@ def naver_money_exchange_rate(search, to="원"):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"}
     r = requests.get(url, headers=headers)
     bs = BeautifulSoup(r.text, "lxml")
-    # <span> 태그 속성 class에 값이 "nt_eng._code"인 요소 가져오기
+    # <span> 태그 속성 class에 값이 "nt_eng._code"인 요소 하나 가져오기
     source = bs.select_one("span.nt_eng._code")
-    # <span> 태그 속성 class에 값이 "nb_txt._pronunciation"인 요소 가져오기
+    # <span> 태그 속성 class에 값이 "nb_txt._pronunciation"인 요소 하나 가져오기
     target = bs.select_one("span.nb_txt._pronunciation")
-    # <input> 태그 속성 id 값이 "num"인 요소들 가져오기 
+    # <input> 태그 속성 id 값이 "num"인 요소들 가져오기 (리스트 형태로 가져오기)
     inputs = bs.select("input#num")
     # <input> 태그 속성 id 값이 "num"인 요소가 2개인 경우
     if len(inputs) == 2:
