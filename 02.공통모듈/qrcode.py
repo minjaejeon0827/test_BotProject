@@ -1,4 +1,13 @@
 # 비쥬얼스튜디오코드(VSCode) cmd 터미널창에 
+# 아래처럼 파이썬 환경변수 라이브러리 "python-dotenv" 설치 및 
+# 환경 변수 파일 ".env" 사용하기
+# pip install python-dotenv
+# 주의사항 - 깃허브(GitHub), 깃소스트리(SourceTree) 등등...
+#           오픈 소스 관리 프로그램에는 환경 변수 파일 ".env"을
+#           Git 커밋(commit), 푸시(push) 처리하면 오류가 발생하므로
+#           해당 환경 변수 파일 ".env"는 Git 커밋(commit), 푸시(push) 처리하면 안 된다.
+
+# 비쥬얼스튜디오코드(VSCode) cmd 터미널창에 
 # QRCode 관련 라이브러리 2가지 "pyqrcodeng" "pypng" 
 # 설치 하기 위해 아래 명령어 입력 및 엔터
 # pip install pyqrcodeng pypng
