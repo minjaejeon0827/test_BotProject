@@ -64,32 +64,64 @@ def open_chat(chat_name):
         return True
     return False
 
+# 스레드란?
+# 작업을 하는 어떤 단위를 스레드라고 한다.
+# 이러한 스레드가 모이면 프로세스가 된다.
+# 각 스레드에는 고유한 키보드 상태가 존재한다.
+# 그래서 프로그램마다 그냥 다른 키보드 상태를 관리한다.
 def kakao_get_message(chatname):
+    # 매개변수 chatname에 저장된 문자열과 동일한 이름("전민재")의 윈도우 핸들("전민재" 카카오 채팅방) 값 가져오기 
     hwndMain = win32gui.FindWindow(None, chatname)
+    # 변수 hwndMain이 True면
     if hwndMain:
+        # 부모 윈도우 핸들 값을 가진 "hwnd"의 자식 윈도우 "EVA_VH_ListControl_Dblclk"의 핸들 값 가져오기 
         hwnd = win32gui.FindWindowEx(hwndMain, None, "EVA_VH_ListControl_Dblclk", None) 
+        # _user32.GetWindowThreadProcessId 함수 호출할 때 
+        # 인자로 대상 핸들 "hwnd"과 "None"을 전달한다.
+        # _user32.GetWindowThreadProcessId 함수 호출 결과
+        # 스레드 아이디를 구해올 수 있고 해당 스레드 아이디는
+        # 변수 thread_id에 저장된다.
         thread_id = _user32.GetWindowThreadProcessId(hwnd, None)
+        # 함수 win32api.MAKELONG 호출 
+        # -> 'A'라는 키의 코드값을 구해서 변수 lparam에 저장 
         lparam = win32api.MAKELONG(0, _user32.MapVirtualKeyA(ord('A'), 0))
+        # 메모리 확보하기 위해 unsigned byte * 256 곱한 값을 변수 PBYTE에 할당 
         PBYTE = ctypes.c_ubyte * 256
-        pKeyBuffers = PBYTE()
-        pKeyBuffers_old = PBYTE()
+        pKeyBuffers = PBYTE()  # 메모리 공간 할당 및 변수 pKeyBuffers에 할당
+        pKeyBuffers_old = PBYTE() # 메모리 공간 할당 및 변수 pKeyBuffers_old에 할당 
         pKeyBuffers[win32con.VK_CONTROL] |= 128 #10000000
 
+        # 스레드 아이디(thread_id)를 인자로 넘겨서 
+        # 현재 파이썬 대상 스레드 아이디 (카카오톡 채팅방 - win32api.GetCurrentThreadId())와 연결
         _user32.AttachThreadInput(win32api.GetCurrentThreadId(), thread_id, True)
+        # 함수 _user32.GetKeyboardState 호출하여 현재 키보드 상태(pKeyBuffers_old) 구하기 
         _user32.GetKeyboardState(ctypes.byref(pKeyBuffers_old))
+        # 함수 _user32.GetKeyboardState 호출하여 
+        # 현재 파이썬 대상 스레드 아이디 (카카오톡 채팅방 - win32api.GetCurrentThreadId())
+        # 새로 입력할 Ctrl 키 키보드 상태(pKeyBuffers) 셋팅하기 
         _user32.SetKeyboardState(ctypes.byref(pKeyBuffers))
 
-        time.sleep(0.01)
+        time.sleep(0.01)   # 0.01초 대기
+        # 카카오톡 채팅방에 메시지 전송
         win32api.PostMessage(hwnd, win32con.WM_KEYDOWN, ord('A'), lparam)
-        time.sleep(0.01)
+        time.sleep(0.01)   # 0.01초 대기
+        # 카카오톡 채팅방에 메시지 전송
         win32api.PostMessage(hwnd, win32con.WM_KEYUP, ord('A'), lparam | 0xC0000000)
-        time.sleep(0.01)
+        time.sleep(0.01)   # 0.01초 대기
+        # 카카오톡 채팅방에 메시지 전송
         win32api.PostMessage(hwnd, win32con.WM_KEYDOWN, ord('C'), lparam)
-        time.sleep(0.01)
+        time.sleep(0.01)   # 0.01초 대기
+        # 카카오톡 채팅방에 메시지 전송
         win32api.PostMessage(hwnd, win32con.WM_KEYUP, ord('C'), lparam | 0xC0000000)
-        time.sleep(0.01)
+        
+        time.sleep(0.01)   # 0.01초 대기
+        # 함수 _user32.GetKeyboardState 호출하여 
+        # 현재 파이썬 대상 스레드 아이디 (카카오톡 채팅방 - win32api.GetCurrentThreadId())
+        # 현재 키보드 상태(pKeyBuffers_old) 셋팅하기 
         _user32.SetKeyboardState(ctypes.byref(pKeyBuffers_old))
-        time.sleep(0.01)
+        time.sleep(0.01)   # 0.01초 대기
+        # 스레드 아이디(thread_id)를 인자로 넘겨서 
+        # 현재 파이썬 대상 스레드 아이디 (카카오톡 채팅방 - win32api.GetCurrentThreadId())와 연결 해제
         _user32.AttachThreadInput(win32api.GetCurrentThreadId(), thread_id, False)
 
         lparam = win32api.MAKELONG(10, 130)
@@ -116,6 +148,7 @@ def kakao_get_message(chatname):
         return messages
     return []
 
+# 클립보드에 저장된 데이터 복사해서 가져오기 
 def copy_clipboard():
     win32clipboard.OpenClipboard()
     data = win32clipboard.GetClipboardData()
@@ -177,8 +210,9 @@ if __name__ == "__main__":
     # chatname = "남박사"
     # main(chatname)
     chat_name = "전민재"
-    open_chat(chat_name)
+    # open_chat(chat_name)
+    kakao_get_message(chat_name)
     time.sleep(0.5)
-    send_message("전민재", "안녕하세요 봇입니다.")
+    # send_message("전민재", "안녕하세요 봇입니다.")
 
     
