@@ -46,6 +46,7 @@ def open_chat(chat_name):
     # 윈도우의 핸들 값 16진수 "0x4109cc" 출력 
     print(hex(hwndKakao))
 
+    # "hwndKakao"가 부모 윈도우 핸들 값을 가진 경우 
     if hwndKakao:
         # 부모 윈도우 핸들 값을 가진 "hwndKakao"의 자식 윈도우 "EVA_ChildWindow"의 핸들 값 가져오기 
         hwnd1 = win32gui.FindWindowEx(hwndKakao, None, "EVA_ChildWindow", None)
@@ -133,16 +134,20 @@ def kakao_get_message(chatname):
         messages = []
         date = ""
         for d in data:
+            # 변수 data에 들어있는 문자열에서 대괄호 닫힘("]") 있는 경우
             if d.find("]") >= 0:
                 _name = d[1:d.find("]")]
+                # 함수 strip() - 공백제거
                 d = d[d.find("]") + 1:].strip()
                 _datetime = date + " " + d[1:d.find("]")]
+                # 함수 strip() - 공백제거
                 _msg = d[d.find("]") + 1:].strip()
                 messages.append({
                     "name": _name,
                     "datetime": _datetime,
                     "msg": _msg
                 })
+            # 변수 data에 들어있는 문자열에서 대괄호 닫힘("]") 없는 경우
             else:
                 date = d
         return messages
@@ -155,6 +160,7 @@ def copy_clipboard():
     win32clipboard.CloseClipboard()
     return data
 
+
 def main(chatname):
     last_message = ""
     my_message = ""
@@ -166,11 +172,14 @@ def main(chatname):
                 msg = message.get("msg")
                 if last_message == "":
                     last_message = msg
+                # 공통 모듈(환율) 사용해야 하는 경우 
                 if msg != last_message and msg != my_message:
+                    # 정규식 f"^([0-9]+\s?)({"|" 사용하기 위해 re.search 함수 사용 
                     match_money = re.search(f"^([0-9]+\s?)({"|".join(CURRENCY_LIST)})+$", msg)
                     match_weather = re.search("^([가-힣]{2})\s?날씨$", msg)
                     if match_money:
                         src = match_money.group()
+                        # 공통 모듈(환율) 함수 money_exchange_rate.google_money_exchange_rate 호출하여 환율 계산 처리
                         result = money_exchange_rate.google_money_exchange_rate(src)
                         output = f"{result[1]} {result[0]} 원"
                     else:
@@ -186,8 +195,12 @@ def main(chatname):
                         else:
                             output = f"{msg}에 대한 날씨 정보 구하기 실패"
                     
-                    send_message(chatname, output)
+                    send_message(chatname, output) 
+                    # 위의 if 조건절 if msg != last_message and msg != my_message: 을 만족시켜
+                    # 해당 if 조건절 하위의 로직들이 반복 처리 되는것을 막기 위해서 
+                    # 카카오 챗봇이 보낸 메시지 output을 변수 my_message에 저장 
                     my_message = output
+                    # 변수 msg에 저장된 문자열 변수 last_message에 저장 
                     last_message = msg
                 time.sleep(1)
             else:
@@ -210,9 +223,10 @@ if __name__ == "__main__":
     # chatname = "남박사"
     # main(chatname)
     chat_name = "전민재"
+    main(chat_name)
     # open_chat(chat_name)
-    kakao_get_message(chat_name)
-    time.sleep(0.5)
+    # kakao_get_message(chat_name)
+    # time.sleep(0.5)
     # send_message("전민재", "안녕하세요 봇입니다.")
 
     
