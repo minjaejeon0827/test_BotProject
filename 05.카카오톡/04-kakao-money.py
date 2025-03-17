@@ -4,7 +4,7 @@
 # 참고 3 URL - https://velog.io/@matisse/flask-jsonify-%EC%99%80-json.dumps%EC%9D%98-%EC%B0%A8%EC%9D%B4
 
 from flask import Flask, request, jsonify
-from modules import money_exchange_rate
+from modules import money_exchange_rate, weather
 from pprint import pprint
 import re
 
